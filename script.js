@@ -1,3 +1,39 @@
+// Create global variables
+let userEmail = '';
+let userCity = '';
+let userZip = '';
+// Function to update global variables
+function updateVariables() {
+  const emailInput = document.getElementById('email');
+  const cityInput = document.getElementById('city');
+  const zipInput = document.getElementById('zip');
+  if (emailInput) {
+    userEmail = emailInput.value;
+  }
+  if (cityInput) {
+    userCity = cityInput.value;
+  }
+  if (zipInput) {
+    userZip = zipInput.value;
+  }
+}
+// Add event listeners to input boxes
+document.addEventListener('DOMContentLoaded', function() {
+  const emailInput = document.getElementById('email');
+  const cityInput = document.getElementById('city');
+  const zipInput = document.getElementById('zip');
+  updateVariables();
+  if (emailInput) {
+    emailInput.addEventListener('input', updateVariables);
+  }
+  if (cityInput) {
+    cityInput.addEventListener('input', updateVariables);
+  }
+  if (zipInput) {
+    zipInput.addEventListener('input', updateVariables);
+  }
+});
+
 // Get the cart count element
 const cartCountElement = document.getElementById('cart-count');
 
