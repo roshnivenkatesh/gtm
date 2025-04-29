@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <!-- Google Tag Manager Should Go Here -->
 </head>
+
 <body>
     <!-- Google Tag Manager (noscript) should go here-->
     <header>
@@ -18,24 +19,52 @@
             </ul>
         </nav>
     </header>
+
     <main>
         <h1>Checkout</h1>
-        <form id="checkout-form">
-            <label for="name">Name:</label>
-            <input type="text" id="name" value="John Doe"><br><br>
-            <label for="email">Email:</label>
-            <input type="email" id="email" value="johndoe@example.com"><br><br>
-            <label for="address">Address:</label>
-            <input type="text" id="address" value="123 Main St"><br><br>
-            <label for="city">City:</label>
-            <input type="text" id="city" value="Anytown"><br><br>
-            <label for="state">State:</label>
-            <input type="text" id="state" value="CA"><br><br>
-            <label for="zip">Zip:</label>
-            <input type="text" id="zip" value="12345"><br><br>
-            <button id="purchase-btn" type="button" onclick="completePurchase()">Complete Purchase</button>
-        </form>
+
+        <div class="checkout-container">
+            <div class="form-section">
+                <form id="checkout-form">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" value="John Doe">
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" value="johndoe@example.com">
+
+                    <label for="address">Address:</label>
+                    <input type="text" id="address" value="123 Main St">
+
+                    <label for="city">City:</label>
+                    <input type="text" id="city" value="Anytown">
+
+                    <label for="state">State:</label>
+                    <input type="text" id="state" value="CA">
+
+                    <label for="zip">Zip:</label>
+                    <input type="text" id="zip" value="12345">
+
+                    <button id="purchase-btn" type="button" onclick="completePurchase()">Complete Purchase</button>
+                </form>
+            </div>
+
+            <div class="cart-summary-section">
+                <h2>Order Summary:</h2>
+                <table id="cart-summary-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-summary-body"></tbody>
+                </table>
+                <p>Total: $<span id="cart-total">0</span></p>
+            </div>
+        </div>
     </main>
+
     <script src="script.js"></script>
 </body>
 </html>
