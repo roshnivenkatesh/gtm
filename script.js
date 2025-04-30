@@ -1,208 +1,193 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
+// Create global variables
+let userEmail = '';
+let userCity = '';
+let userZip = '';
+// Function to update global variables
+function updateVariables() {
+  const emailInput = document.getElementById('email');
+  const cityInput = document.getElementById('city');
+  const zipInput = document.getElementById('zip');
+  if (emailInput) {
+    userEmail = emailInput.value;
+  }
+  if (cityInput) {
+    userCity = cityInput.value;
+  }
+  if (zipInput) {
+    userZip = zipInput.value;
+  }
+}
+// Add event listeners to input boxes
+document.addEventListener('DOMContentLoaded', function() {
+  const emailInput = document.getElementById('email');
+  const cityInput = document.getElementById('city');
+  const zipInput = document.getElementById('zip');
+  updateVariables();
+  if (emailInput) {
+    emailInput.addEventListener('input', updateVariables);
+  }
+  if (cityInput) {
+    cityInput.addEventListener('input', updateVariables);
+  }
+  if (zipInput) {
+    zipInput.addEventListener('input', updateVariables);
+  }
+});
+
+// Get the cart count element
+const cartCountElement = document.getElementById('cart-count');
+
+// Initialize the cart
+let cart = {};
+
+// Function to update the cart count
+function updateCartCount() {
+    const cartCount = Object.values(cart).reduce((acc, item) => acc + item.quantity, 0);
+    cartCountElement.textContent = cartCount;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 1em;
-    text-align: center;
+// Function to add an item to the cart
+function addToCart(name, price) {
+    if (cart[name]) {
+        cart[name].quantity++;
+    } else {
+        cart[name] = { price, quantity: 1 };
+    }
+    updateCartCount();
+    showNotification(`Added ${name} to cart!`);
+    saveCartToLocalStorage();
 }
 
-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: space-between;
+// Function to remove an item from the cart
+function removeFromCart(name) {
+    if (cart[name]) {
+        delete cart[name];
+    }
+    updateCartCount();
+    saveCartToLocalStorage();
 }
 
-nav li {
-    margin-right: 20px;
+// Function to save the cart to local storage
+function saveCartToLocalStorage() {
+    localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-nav a {
-    color: #fff;
-    text-decoration: none;
+// Function to load the cart from local storage
+function loadCartFromLocalStorage() {
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+        cart = JSON.parse(storedCart);
+        updateCartCount();
+    }
 }
 
-main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2em;
+// Load the cart from local storage when the page loads
+loadCartFromLocalStorage();
+
+// Function to display the cart table
+function displayCartTable() {
+    const cartTableBody = document.getElementById('cart-body');
+    cartTableBody.innerHTML = '';
+    for (const name in cart) {
+        const row = document.createElement('tr');
+        const nameCell = document.createElement('td');
+        nameCell.textContent = name;
+        row.appendChild(nameCell);
+        const priceCell = document.createElement('td');
+        priceCell.textContent = `$${cart[name].price}`;
+        row.appendChild(priceCell);
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = cart[name].quantity;
+        row.appendChild(quantityCell);
+        const totalCell = document.createElement('td');
+        totalCell.textContent = `$${cart[name].price * cart[name].quantity}`;
+        row.appendChild(totalCell);
+        cartTableBody.appendChild(row);
+    }
+
+    // Calculate and display the cart total
+    const total = getCartTotal();
+    document.getElementById('cart-total').textContent = total.toFixed(2);
 }
 
-h1 {
-    font-size: 24px;
-    margin-bottom: 10px;
+// Display the cart table when the cart page loads
+if (document.getElementById('cart-table')) {
+    displayCartTable();
 }
 
-button {
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top:10px;
+// Function to initiate checkout
+function initiateCheckout() {
+    // Redirect to the checkout page
+    window.location.href = 'checkout.html';
 }
 
-button:hover {
-    background-color: #3e8e41;
+// Function to complete purchase
+function completePurchase() {
+    // Clear the cart
+    cart = {};
+    saveCartToLocalStorage();
+    updateCartCount();
+    // Redirect to the purchase confirmation page
+    window.location.href = 'purchase-confirmation.html';
 }
 
-.products {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-.product-list {
-  display: flex;
-  justify-content: center;
-}
-.product {
-  margin: 20px;
-  width: calc(33.33% - 20px);
-  display: flex;
-  flex-direction: column;
-}
-.product .content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.product img {
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  border-radius: 10px;
-}
-.product h3, .product p {
-  text-align: center;
-}
-.product button {
-  margin-top: auto;
+// Add event listener to the purchase button
+if (document.getElementById('purchase-btn')) {
+    document.getElementById('purchase-btn').addEventListener('click', completePurchase);
 }
 
-#cart-table {
-    border-collapse: collapse;
-    width: 100%;
+function showNotification(message) {
+    const notification = document.createElement('div');
+    notification.classList.add('notification');
+    notification.innerHTML = `
+        <span>${message}</span>
+        <svg width="20" height="20" viewBox="0 0 20 20">
+            <path d="M10 2C5.14 2 1 5.14 1 10s4.14 8 9 8 9-4.14 9-8S14.86 2 10 2z" fill="#fff" />
+        </svg>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
 }
 
-#cart-table th, #cart-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
+// Function to get the total value of the cart
+function getCartTotal() {
+    let total = 0;
+    for (const name in cart) {
+        total += cart[name].price * cart[name].quantity;
+    }
+    return total;
 }
 
-#cart-table th {
-    background-color: #f0f0f0;
+// Function to display the cart summary
+function displayCartSummary() {
+    const cartSummaryBody = document.getElementById('cart-summary-body');
+    cartSummaryBody.innerHTML = '';
+    for (const name in cart) {
+        const row = document.createElement('tr');
+        const productCell = document.createElement('td');
+        productCell.textContent = name;
+        productCell.style.width = '40%';
+        row.appendChild(productCell);
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = cart[name].quantity;
+        quantityCell.style.width = '20%';
+        quantityCell.style.textAlign = 'center';
+        row.appendChild(quantityCell);
+        const totalCell = document.createElement('td');
+        totalCell.textContent = `$${cart[name].price * cart[name].quantity}`;
+        totalCell.style.width = '40%';
+        totalCell.style.textAlign = 'right';
+        row.appendChild(totalCell);
+        cartSummaryBody.appendChild(row);
+    }
+    // Calculate and display the cart total
+    const total = getCartTotal();
+    document.getElementById('cart-total').textContent = total.toFixed(2);
 }
-
-#cart-count {
-    font-size: 16px;
-    font-weight: bold;
-    margin-left: 2px;
-    margin-right: 2px;
-}
-
-.checkout-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2em;
-}
-
-.checkout-form label {
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.checkout-form input[type="text"], .checkout-form input[type="email"] {
-    width: 100%;
-    height: 40px;
-    margin-bottom: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-}
-
-.checkout-form button[type="submit"] {
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.checkout-form button[type="submit"]:hover {
-    background-color: #3e8e41;
-}
-
-.notification {
-    position: fixed;
-    top: 50px;
-    right: 20px;
-    background-color: #333;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-}
-
-.notification svg {
-    margin-right: 10px;
-    fill: #fff;
-}
-
-.notification span {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.checkout-container {
-    display: flex;
-    justify-content: space-between;
-}
-
-.form-section {
-    width: 60%;
-}
-
-.cart-summary-section {
-    width: 30%;
-}
-
-#cart-summary-table {
-    border-collapse: collapse;
-    width: 100%;
-}
-#cart-summary-table th, #cart-summary-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
-    text-align: left;
-}
-#cart-summary-table th {
-    background-color: #f0f0f0;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-input[type="text"], input[type="email"] {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
+// Display the cart summary when the checkout page loads
+if (document.getElementById('cart-summary-table')) {
+    loadCartFromLocalStorage();
+    displayCartSummary();
 }
